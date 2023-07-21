@@ -28,6 +28,29 @@ async function readUsersData(): Promise<UserDataProps[]> {
   }
 }
 
+async function watchUsersData(onCallBack: any) {
+  const dbRef = ref(db);
+  // watch value on users collection
+  onValue(
+    child(dbRef, `users/`),
+    async (snapshot) => {
+      const data: UserDataProps[] = [];
+      const dataSnapshots = snapshot.val();
+      Object.keys(dataSnapshots).forEach((element) => {
+        data.push({
+          id: element,
+          ...dataSnapshots[element],
+        });
+      });
+      onCallBack(data);
+    },
+    (error) => {
+      // pass an empty result using callback
+      onCallBack(null);
+    }
+  );
+}
+
 /**
  * The function `readChatsData` reads chat data from a database and returns it through a callback
  * function.
@@ -35,9 +58,7 @@ async function readUsersData(): Promise<UserDataProps[]> {
  * the result of reading the chats data. It should accept one parameter, which will be the data
  * retrieved from the database.
  */
-async function readChatsData(onCallBack: any) {
-  const dbRef = ref(db);
-
+async function watchChatsAndConversationsData(onCallBack: any) {
   // watch value on chats collection
   watchChatsData(async (chatSnapshot: any) => {
     // watch value on conversations collection
@@ -112,4 +133,4 @@ async function watchConversationsData(onCallBack: any) {
   );
 }
 
-export { readUsersData, readChatsData };
+export { readUsersData, watchUsersData, watchChatsAndConversationsData };

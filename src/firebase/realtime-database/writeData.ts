@@ -11,13 +11,14 @@ const db = getDatabase(firebase_app);
 function writeUserData({ userId, user }: WriteUserDataInputProps) {
   set(ref(db, "users/" + userId), user);
 }
-
+ 
 /**
- * The function `writeChatData` creates a new chat and conversation in a database, with optional
- * message content.
+ * The function `writeChatData` creates a new chat and conversation in a database, and returns the key
+ * of the new chat.
  * @param {WriteChatDataInputProps}  - - `from_userId`: The ID of the user sending the message.
+ * @returns the key of the newly created chat.
  */
-function writeChatData({ from_userId, to_userId, message }: WriteChatDataInputProps) {
+function writeChatData({ from_userId, to_userId, message }: WriteChatDataInputProps): string | null {
   const newChatRef = push(ref(db, "chats/"));
   set(newChatRef, {
     users: [from_userId, to_userId],
@@ -30,6 +31,7 @@ function writeChatData({ from_userId, to_userId, message }: WriteChatDataInputPr
       created: new Date().toISOString(),
     });
   }
+  return newChatRef.key;
 }
 
 /**

@@ -2,7 +2,7 @@
 import LoadingDialog from "@/component/dialog/loading";
 import { useAuthContext } from "@/context/AuthContext";
 import logout from "@/firebase/auth/logout";
-import { readChatsData, readUsersData } from "@/firebase/realtime-database/readData";
+import { watchChatsAndConversationsData, watchUsersData } from "@/firebase/realtime-database/readData";
 import { ChatDataProps, UserDataProps } from "@/firebase/realtime-database/types";
 import { writeChatData, writeConversationMessageData } from "@/firebase/realtime-database/writeData";
 import { isoStringToTimeWithAMPM } from "@/utils/isoStringToTime";
@@ -136,13 +136,14 @@ function Page() {
    */
   const initializeUsersDataFetch = async () => {
     if (user != null) {
-      const list = await readUsersData();
-      setCurrentUser(list.find((x) => x.id === user?.uid));
-      setusersList(list.filter((x) => x.id !== user?.uid));
-      setnewUsersList(list.filter((x) => x.id !== user?.uid));
-      readChatsData((data: ChatDataProps[]) => {
-        setchatList(data);
-        setCurrentUserChatList(data.filter((x) => x.users.some((y) => y.id === user?.uid)));
+      watchUsersData((list: UserDataProps[]) => {
+        setCurrentUser(list.find((x) => x.id === user?.uid));
+        setusersList(list.filter((x) => x.id !== user?.uid));
+        setnewUsersList(list.filter((x) => x.id !== user?.uid));
+      });
+      watchChatsAndConversationsData((list: ChatDataProps[]) => {
+        setchatList(list);
+        setCurrentUserChatList(list.filter((x) => x.users.some((y) => y.id === user?.uid)));
       });
     }
   };
@@ -240,7 +241,8 @@ function Page() {
     if (currentUser) {
       handleClose();
       setisLoading(true);
-      writeChatData({ from_userId: currentUser.id, to_userId: userId, message: "Hello" });
+      const chatID = writeChatData({ from_userId: currentUser.id, to_userId: userId, message: "Hello" });
+      if (chatID) openChatConversation(chatID);
       setisLoading(false);
     }
   };
