@@ -15,3 +15,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+
+### Additional
+1. When the project is running, Register a user first on this link [http://localhost:3000/registration](http://localhost:3000/registration)
+2. After registering, it will automatically go to the dashboard page where chats section will show.
+3. At first, there is no chats on the right side section you need to click the <b>Create a New Chat button</b> 
+4. It will show all users available. If there is no available users create a new one on Incognito mode.
+5. Then after creating another user, it will show up to the user list popup.
+6. Then just click it and you can now start a conversation with another user.
